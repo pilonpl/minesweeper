@@ -138,6 +138,22 @@ void MS_discover(int x, int y, MS* ms) {
     }
 }
 
+int MS_is_won(MS* ms) {
+    int count = ms->height*ms->width;
+    for (int x=1;x<=ms->width;x++) {
+        for (int y=1;y<=ms->height;y++) {
+            int value = *Array2D_cell(x, y, ms->visual);
+            if (value > 0) {
+                count--;
+            }
+        }
+    }
+    if (count == ms->mines) {
+        return 1;
+    }
+    return 0;
+}
+
 void MS_print(MS* ms) {
     printf("Board:\n");
     Array2D_print(ms->board);

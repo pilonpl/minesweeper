@@ -15,4 +15,5 @@ typedef struct MS {
 } MS;
 MS* MS_new(int width, int height, int mines, int px, int py);
 void MS_discover(int x, int y, MS* ms);
+int MS_is_won(MS* ms);
 void MS_print(MS* ms);
