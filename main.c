@@ -15,7 +15,13 @@ void drawMinesweeper(MS* ms, int x, int y, int size, int spacing) {
             int cx = x + (tilex - 1) * (size + spacing);
             int cy = y + (tiley - 1) * (size + spacing);
             int tile = *Array2D_cell(tilex, tiley, ms->board);
-            DrawRectangle(cx, cy, size, size, FG);
+            int visual = *Array2D_cell(tilex, tiley, ms->visual);
+            if (visual == 0) {
+                DrawRectangle(cx, cy, size, size, FG);
+                continue;
+            } else {
+                DrawRectangle(cx, cy, size, size, FG);
+            }
             
             if (tile == 9) {
                 DrawText("#", cx, cy, 40, WHITE);
@@ -43,7 +49,7 @@ int main() {
     InitWindow(800, 800, "Minesweeper");
     SetTargetFPS(60);
 
-    MS* ms = MS_new(10, 10, 10, 0, 0);
+    MS* ms = MS_new(20, 20, 10, 0, 0);
     int size = 50;
     int spacing = 5;
     MS_print(ms);
@@ -54,6 +60,10 @@ int main() {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             Vector2 c = getCords(x, y, size, spacing);
             printf("cords: %f, %f\n", c.x, c.y);
+            MS_discover(c.x, c.y, ms);
+            if (MS_is_won(ms)) {
+                printf("You win");
+            }
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {
 
@@ -67,19 +77,4 @@ int main() {
     }
 
     CloseWindow();
-/*
-    const int width = 8;
-    const int height = 8;
-    //Array2D* array = Array2D_new(width, height);
-    //Array2D_print(array);
-    MS* ms = MS_new(width, height, 10, 0, 5);
-    //Array2D_print(ms->board);
-    clock_t t1 = clock();
-    MS_discover(0, 5, ms);
-    clock_t t2 = clock();
-    printf("clock: %ld\n", t2-t1);
-    printf("seconds: %f\n", (double)t2/CLOCKS_PER_SEC-(double)t1/CLOCKS_PER_SEC);
-    MS_print(ms);
-    return 0;
-*/
 }
