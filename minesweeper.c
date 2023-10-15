@@ -59,7 +59,20 @@ typedef struct MS {
     Array2D* board;
 } MS;
 
-MS* MS_new(int width, int height, int mines, int px, int py) {
+MS* MS_new(int width, int height, int mines) {
+    MS* ms = (MS*)malloc(sizeof(MS));
+    ms->mines = mines;
+    ms->width = width;
+    ms->height = height;
+    ms->visual = NULL;
+    ms->board = NULL;
+    return ms;
+}
+
+void MS_generate(MS* ms, int px, int py) {
+    int mines = ms->mines;
+    int width = ms->width;
+    int height = ms->height;
     Array2D* visual = Array2D_new(width + 2, height + 2);
     Array2D* board = Array2D_new(width + 2, height + 2);
     srand(14);
@@ -91,13 +104,8 @@ MS* MS_new(int width, int height, int mines, int px, int py) {
             }
         }
     }
-    MS* ms = (MS*)malloc(sizeof(MS));
-    ms->mines = mines;
-    ms->width = width;
-    ms->height = height;
     ms->visual = visual;
     ms->board = board;
-    return ms;
 }
 
 int MS_is_edge(int x, int y, MS* ms) {
