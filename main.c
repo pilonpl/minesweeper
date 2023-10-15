@@ -14,7 +14,10 @@ void drawMinesweeper(MS* ms, int x, int y, int size, int spacing) {
         for (int tilex = 1;tilex < ms->width + 1;tilex++) {
             int cx = x + (tilex - 1) * (size + spacing);
             int cy = y + (tiley - 1) * (size + spacing);
-            int tile = *Array2D_cell(tilex, tiley, ms->board);
+            int tile = 0;
+            if (ms->board != NULL) {
+                tile = *Array2D_cell(tilex, tiley, ms->board);
+            }
             int visual = *Array2D_cell(tilex, tiley, ms->visual);
             if (visual == 0) {
                 DrawRectangle(cx, cy, size, size, FG);
@@ -49,20 +52,25 @@ int main() {
     InitWindow(800, 800, "Minesweeper");
     SetTargetFPS(60);
 
-    MS* ms = MS_new(20, 20, 10, 0, 0);
+    MS* ms = MS_new(20, 20, 10);
+    
     int size = 50;
     int spacing = 5;
-    MS_print(ms);
     size = (GetScreenHeight() / ms->height) - spacing;
     int x = (GetScreenWidth() / 2) - (ms->width * size + spacing * (ms->width - 1)) / 2;
     int y = spacing / 2;
     while (!WindowShouldClose()) {
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
             Vector2 c = getCords(x, y, size, spacing);
+            if (ms->board == NULL) {
+                MS_generate(ms, c.x, c.y);
+            }
             printf("cords: %f, %f\n", c.x, c.y);
             MS_discover(c.x, c.y, ms);
-            if (MS_is_won(ms)) {
-                printf("You win");
+            if (*Array2D_cell(c.x + 1, c.y + 1, ms->board) == 9) {
+                printf("You stepped on a mine\n");
+            } else if (MS_is_won(ms)) {
+                printf("You win\n");
             }
         }
         else if (IsMouseButtonPressed(MOUSE_BUTTON_RIGHT)) {

@@ -64,7 +64,7 @@ MS* MS_new(int width, int height, int mines) {
     ms->mines = mines;
     ms->width = width;
     ms->height = height;
-    ms->visual = NULL;
+    ms->visual = Array2D_new(width + 2, height + 2);
     ms->board = NULL;
     return ms;
 }
@@ -72,8 +72,7 @@ MS* MS_new(int width, int height, int mines) {
 void MS_generate(MS* ms, int px, int py) {
     int mines = ms->mines;
     int width = ms->width;
-    int height = ms->height;
-    Array2D* visual = Array2D_new(width + 2, height + 2);
+    int height = ms->height; 
     Array2D* board = Array2D_new(width + 2, height + 2);
     srand(14);
     int count = 0;
@@ -104,7 +103,6 @@ void MS_generate(MS* ms, int px, int py) {
             }
         }
     }
-    ms->visual = visual;
     ms->board = board;
 }
 
