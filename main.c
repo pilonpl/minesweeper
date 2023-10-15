@@ -9,20 +9,6 @@
 const Color BG = { 34, 34, 34, 255 };
 const Color FG = { 17, 17, 17, 255 };
 
-int min(int a, int b) {
-    if (a <= b) {
-        return a;
-    }
-    return b;
-}
-
-int max(int a, int b) {
-    if (a >= b) {
-        return a;
-    }
-    return b;
-}
-
 void drawMinesweeper(MS* ms, int x, int y, int size, int spacing) {
     for (int tiley = ms->height;tiley >= 1;tiley--) {
         for (int tilex = 1;tilex < ms->width + 1;tilex++) {
@@ -72,7 +58,7 @@ int main() {
     int spacing = 5;
     
     while (!WindowShouldClose()) {
-        size = (min(GetScreenHeight(), GetScreenWidth()) / min(ms->height, ms->width)) - spacing;
+        size = (fmin(GetScreenHeight(), GetScreenWidth()) / fmin(ms->height, ms->width)) - spacing;
         int x = (GetScreenWidth() / 2) - (ms->width * size + spacing * (ms->width - 1)) / 2;
         int y = spacing / 2;
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
