@@ -14,6 +14,8 @@ int MS_size;
 int MS_x;
 int MS_y;
 
+Texture2D tiles[11];
+
 void drawMinesweeper() {
     for (int tiley = ms->height;tiley >= 1;tiley--) {
         for (int tilex = 1;tilex < ms->width + 1;tilex++) {
@@ -31,13 +33,9 @@ void drawMinesweeper() {
                 DrawRectangle(cx, cy, MS_size, MS_size, FG);
             }
             
-            if (tile == 9) {
-                DrawText("#", cx, cy, 40, WHITE);
-            }
-            else {
-                DrawText(TextFormat("%d", tile), cx, cy, 40, WHITE);
-            }
-
+            Rectangle source = {0.0, 0.0, tiles[tile].width, tiles[tile].height};
+            Rectangle dest = {cx, cy, MS_size, MS_size};
+            DrawTexturePro(tiles[tile], source, dest, (Vector2){0.0, 0.0}, 0.0, WHITE);
         }
     }
 }
@@ -57,7 +55,19 @@ int main() {
     InitWindow(800, 800, "Minesweeper");
     SetTargetFPS(60);
 
-    ms = MS_new(20, 20, 69);
+    tiles[0] = LoadTexture("resources/tiles_0.png");
+    tiles[1] = LoadTexture("resources/tiles_1.png");
+    tiles[2] = LoadTexture("resources/tiles_2.png");
+    tiles[3] = LoadTexture("resources/tiles_3.png");
+    tiles[4] = LoadTexture("resources/tiles_4.png");
+    tiles[5] = LoadTexture("resources/tiles_5.png");
+    tiles[6] = LoadTexture("resources/tiles_6.png");
+    tiles[7] = LoadTexture("resources/tiles_7.png");
+    tiles[8] = LoadTexture("resources/tiles_8.png");
+    tiles[9] = LoadTexture("resources/tiles_mine.png");
+    tiles[10] = LoadTexture("resources/tiles_flag.png");
+
+    ms = MS_new(20, 20, 89);
     
     while (!WindowShouldClose()) {
         MS_spacing = fmin(GetScreenHeight(), GetScreenWidth())/200;
