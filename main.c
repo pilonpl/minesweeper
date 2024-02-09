@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <time.h>
 
 #include "minesweeper.h"
 #include "raylib.h"
@@ -9,21 +8,27 @@
 const Color BG = { 34, 34, 34, 255 };
 const Color FG = { 17, 17, 17, 255 };
 
-void drawMinesweeper(MS* ms, int x, int y, int size, int spacing) {
+MS* ms;
+int MS_spacing = 5;
+int MS_size;
+int MS_x;
+int MS_y;
+
+void drawMinesweeper() {
     for (int tiley = ms->height;tiley >= 1;tiley--) {
         for (int tilex = 1;tilex < ms->width + 1;tilex++) {
-            int cx = x + (tilex - 1) * (size + spacing);
-            int cy = y + (tiley - 1) * (size + spacing);
+            int cx = MS_x + (tilex - 1) * (MS_size + MS_spacing);
+            int cy = MS_y + (tiley - 1) * (MS_size + MS_spacing);
             int tile = 0;
             if (ms->board != NULL) {
                 tile = *Array2D_cell(tilex, tiley, ms->board);
             }
             int visual = *Array2D_cell(tilex, tiley, ms->visual);
             if (visual == 0) {
-                DrawRectangle(cx, cy, size, size, FG);
+                DrawRectangle(cx, cy, MS_size, MS_size, FG);
                 continue;
             } else {
-                DrawRectangle(cx, cy, size, size, FG);
+                DrawRectangle(cx, cy, MS_size, MS_size, FG);
             }
             
             if (tile == 9) {
@@ -37,12 +42,12 @@ void drawMinesweeper(MS* ms, int x, int y, int size, int spacing) {
     }
 }
 
-Vector2 getCords(int x, int y, int size, int spacing) {
+Vector2 getCords() {
     Vector2 mousePos = GetMousePosition();
-    Vector2 pos = { x, y };
+    Vector2 pos = { MS_x, MS_y };
     Vector2 diff = Vector2Subtract(mousePos, pos);
-    int tx = (int)diff.x / (size + spacing);
-    int ty = (int)diff.y / (size + spacing);
+    int tx = (int)diff.x / (MS_size + MS_spacing);
+    int ty = (int)diff.y / (MS_size + MS_spacing);
     Vector2 out = { tx, ty };
     return out;
 }
@@ -52,23 +57,22 @@ int main() {
     InitWindow(800, 800, "Minesweeper");
     SetTargetFPS(60);
 
-    MS* ms = MS_new(20, 20, 10);
-    
-    int size = 50;
-    int spacing = 5;
+    ms = MS_new(20, 20, 69);
     
     while (!WindowShouldClose()) {
-        size = (fmin(GetScreenHeight(), GetScreenWidth()) / fmin(ms->height, ms->width)) - spacing;
-        int x = (GetScreenWidth() / 2) - (ms->width * size + spacing * (ms->width - 1)) / 2;
-        int y = spacing / 2;
+        MS_spacing = fmin(GetScreenHeight(), GetScreenWidth())/200;
+        MS_size = (fmin(GetScreenHeight(), GetScreenWidth()) / fmax(ms->height, ms->width)) - MS_spacing;
+        MS_x = (GetScreenWidth() / 2) - (ms->width * MS_size + MS_spacing * (ms->width - 1)) / 2;
+        MS_y = MS_spacing / 2;
+
         if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-            Vector2 c = getCords(x, y, size, spacing);
+            Vector2 cords = getCords();
             if (ms->board == NULL) {
-                MS_generate(ms, c.x, c.y);
+                MS_generate(ms, cords.x, cords.y);
             }
-            printf("cords: %f, %f\n", c.x, c.y);
-            MS_discover(c.x, c.y, ms);
-            if (*Array2D_cell(c.x + 1, c.y + 1, ms->board) == 9) {
+            printf("cords: %f, %f\n", cords.x, cords.y);
+            MS_discover(cords.x, cords.y, ms);
+            if (*Array2D_cell(cords.x + 1, cords.y + 1, ms->board) == 9) {
                 printf("You stepped on a mine\n");
             } else if (MS_is_won(ms)) {
                 printf("You win\n");
@@ -81,7 +85,7 @@ int main() {
         BeginDrawing();
         ClearBackground(BG);
         
-        drawMinesweeper(ms, x, y, size, spacing);
+        drawMinesweeper();
         EndDrawing();
     }
 
