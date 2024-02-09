@@ -78,7 +78,7 @@ void MS_generate(MS* ms, int px, int py) {
     while (count < mines) {
         int x = rand()%width + 1;
         int y = rand()%height + 1;
-        if (x == px+1 || y == py+1) {
+        if (x == px+1 && y == py+1) {
             continue;
         }
         if (*Array2D_cell(x, y, board)==9) {
